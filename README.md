@@ -20,3 +20,18 @@ This repo deliberately produces:
 
 - Push to `main`
 - Or: Actions -> "CI" -> Run workflow (`workflow_dispatch`)
+
+## Environment: INT
+
+`harden-runner` is pinned to the `rc-20-int` branch, which sets
+`STEPSECURITY_ENV = "int"` (`src/configs.ts`), so the agent reports to:
+
+| | prod (`@v2` / `@rc`) | int (`@rc-20-int`) |
+|---|---|---|
+| API | `agent.api.stepsecurity.io/v1` | `int.api.stepsecurity.io/v1` |
+| Web | `app.stepsecurity.io` | `int1.stepsecurity.io` |
+
+Do NOT use `@rc-20-oss-int` — despite the name it sets `STEPSECURITY_ENV = "agent"`
+(prod). `rc-20-int` is the only int-pointing ref.
+
+Insights land at `https://int1.stepsecurity.io/github/test-org-tushar/suspend-403-repro/actions/runs/<run_id>`.
