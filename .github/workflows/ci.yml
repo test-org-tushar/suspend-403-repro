@@ -1,0 +1,47 @@
+# NOTE: findings below are DELIBERATE. Do not "fix" them — they are the input the
+# policy-driven-PR pipeline needs in order to generate a remediation PR.
+#   - actions are tag-pinned, not SHA-pinned
+#   - no top-level `permissions` block
+#   - the `no-monitoring` job intentionally omits harden-runner
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Harden the runner
+        uses: step-security/harden-runner@v2
+        with:
+          egress-policy: audit
+
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Generate outbound traffic for the runtime baseline
+        run: |
+          set -x
+          curl -sSf https://registry.npmjs.org/-/ping > /dev/null
+          curl -sSf https://api.github.com/zen
+          curl -sSf https://pypi.org/simple/ -o /dev/null
+          npm ping
+
+      - name: Install a dependency
+        run: npm install --no-fund --no-audit left-pad
+
+      - name: Run the "tests"
+        run: node -e "console.log(require('left-pad')('ok', 8, '.'))"
+
+  no-monitoring:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: echo "this job has no harden-runner on purpose"

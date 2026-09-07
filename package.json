@@ -1,0 +1,9 @@
+{
+  "name": "suspend-403-repro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Repro for GitHub App suspension 403 on /access_tokens",
+  "scripts": {
+    "test": "node -e \"console.log('ok')\""
+  }
+}
